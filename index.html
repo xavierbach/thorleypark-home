@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Thorley Park</title>
+
+<!-- iPhone home screen -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Thorley Park">
+<meta name="theme-color" content="#1a3a0a">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="manifest" href="manifest.webmanifest">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green: #1a3a0a;
+    --green-mid: #2d5016;
+    --green-light: #3d6b1e;
+    --cream: #f5f0e8;
+    --bg: #faf8f4;
+    --gold: #b8960c;
+    --text: #1a1a1a;
+    --text-mid: #6b6b6b;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  .header {
+    background: var(--green);
+    color: var(--cream);
+    text-align: center;
+    padding: 3rem 1.5rem 2rem;
+  }
+
+  .header h1 {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+
+  .header .subtitle {
+    font-size: 0.85rem;
+    opacity: 0.6;
+    margin-top: 0.4rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-mid);
+    margin: 1.5rem 0 0.6rem 0.25rem;
+  }
+
+  .section-label:first-child {
+    margin-top: 0;
+  }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.9rem 1rem;
+    background: white;
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .link-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  .link-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .link-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .link-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .link-desc {
+    font-size: 0.75rem;
+    color: var(--text-mid);
+    margin-top: 0.1rem;
+  }
+
+  .link-arrow {
+    color: #c0c0c0;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  /* Icon backgrounds */
+  .icon-tp { background: var(--green); }
+  .icon-budget { background: #1e40af; }
+  .icon-chores { background: #15803d; }
+  .icon-kid { background: #f59e0b; }
+  .icon-sorted { background: #0891b2; }
+  .icon-money { background: #7c3aed; }
+
+  .footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 0.7rem;
+    color: var(--text-mid);
+    opacity: 0.5;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111;
+      --text: #e8e8e8;
+      --text-mid: #888;
+    }
+    .link-card {
+      background: #1a1a1a;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⛲ Thorley Park</h1>
+  <div class="subtitle">Home</div>
+</div>
+
+<div class="container">
+
+  <div class="section-label">Thorley Park</div>
+  <div class="links">
+    <a href="https://thorleypark.com" class="link-card">
+      <div class="link-icon icon-tp">⛲</div>
+      <div class="link-info">
+        <div class="link-title">Thorley Park</div>
+        <div class="link-desc">thorleypark.com</div>
+      </div>
+      <div class="link-arrow">›</div>
+    </a>
+    <a href="https://budget.thorleypark.com" class="link-card">
+      <div class="link-icon icon-budget">💰</div>
+      <div class="link-info">
+        <div class="link-title">Budget</div>
+        <div class="link-desc">budget.thorleypark.com</div>
+      </div>
+      <div class="link-arrow">›</div>
+    </a>
+    <a href="https://chores.thorleypark.com" class="link-card">
+      <div class="link-icon icon-chores">✅</div>
+      <div class="link-info">
+        <div class="link-title">Chores</div>
+        <div class="link-desc">chores.thorleypark.com</div>
+      </div>
+      <div class="link-arrow">›</div>
+    </a>
+    <a href="https://chores.thorleypark.com/kid" class="link-card">
+      <div class="link-icon icon-kid">⭐</div>
+      <div class="link-info">
+        <div class="link-title">Dingo &amp; Fox</div>
+        <div class="link-desc">chores.thorleypark.com/kid</div>
+      </div>
+      <div class="link-arrow">›</div>
+    </a>
+  </div>
+
+  <div class="section-label">Sorted</div>
+  <div class="links">
+    <a href="https://sortedapp.io" class="link-card">
+      <div class="link-icon icon-sorted">📋</div>
+      <div class="link-info">
+        <div class="link-title">Sorted</div>
+        <div class="link-desc">sortedapp.io</div>
+      </div>
+      <div class="link-arrow">›</div>
+    </a>
+    <a href="https://money.sortedapp.io" class="link-card">
+      <div class="link-icon icon-money">💵</div>
+      <div class="link-info">
+        <div class="link-title">Sorted Money</div>
+        <div class="link-desc">money.sortedapp.io</div>
+      </div>
+      <div class="link-arrow">›</div>
+    </a>
+  </div>
+
+  <div class="section-label">New Projects</div>
+  <div class="links">
+    <!-- Add new project links here -->
+    <!-- Example:
+    <a href="https://example.thorleypark.com" class="link-card">
+      <div class="link-icon" style="background: #666;">🚀</div>
+      <div class="link-info">
+        <div class="link-title">New Project</div>
+        <div class="link-desc">example.thorleypark.com</div>
+      </div>
+      <div class="link-arrow">›</div>
+    </a>
+    -->
+  </div>
+
+</div>
+
+<div class="footer">Thorley Park · MacBook Pro</div>
+
+</body>
+</html>

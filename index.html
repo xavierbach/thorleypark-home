@@ -151,6 +151,84 @@
     opacity: 0.5;
   }
 
+  .ticker {
+    background: #0f0f0f;
+    color: #e8e8e8;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .ticker-label {
+    background: #c41e3a;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 0 0.9rem;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+
+  .ticker-track {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    min-width: 0;
+    padding: 0.55rem 0;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 1.5rem, #000 calc(100% - 1.5rem), transparent);
+            mask-image: linear-gradient(to right, transparent, #000 1.5rem, #000 calc(100% - 1.5rem), transparent);
+  }
+
+  .ticker-content {
+    display: inline-flex;
+    white-space: nowrap;
+    will-change: transform;
+    animation: ticker-scroll 90s linear infinite;
+  }
+
+  .ticker:hover .ticker-content,
+  .ticker:active .ticker-content {
+    animation-play-state: paused;
+  }
+
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 1.5rem;
+    color: #e8e8e8;
+    text-decoration: none;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .ticker-item:hover { color: #fff; }
+
+  .ticker-source {
+    color: #888;
+    font-size: 0.75rem;
+  }
+
+  .ticker-loading {
+    padding: 0 1.5rem;
+    color: #888;
+    font-style: italic;
+  }
+
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-content { animation: none; }
+  }
+
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #111;
@@ -169,6 +247,15 @@
 <div class="header">
   <h1>⛲ Thorley Park</h1>
   <div class="subtitle">Home</div>
+</div>
+
+<div class="ticker" id="ticker">
+  <div class="ticker-label">News</div>
+  <div class="ticker-track">
+    <div class="ticker-content" id="ticker-content">
+      <span class="ticker-loading">Loading headlines…</span>
+    </div>
+  </div>
 </div>
 
 <div class="container">
@@ -247,6 +334,65 @@
 </div>
 
 <div class="footer">Thorley Park · MacBook Pro</div>
+
+<script>
+(function () {
+  var REFRESH_MS = 15 * 60 * 1000;
+  var content = document.getElementById('ticker-content');
+  var ticker = document.getElementById('ticker');
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
+  }
+
+  function splitTitle(title, source) {
+    if (source && title.endsWith(' - ' + source)) {
+      return { headline: title.slice(0, -(' - ' + source).length), source: source };
+    }
+    var idx = title.lastIndexOf(' - ');
+    if (idx > 20 && idx > title.length - 60) {
+      return { headline: title.slice(0, idx), source: title.slice(idx + 3) };
+    }
+    return { headline: title, source: source || '' };
+  }
+
+  function renderItems(items) {
+    var html = items.map(function (it) {
+      var parts = splitTitle(it.title || '', it.source || '');
+      var src = parts.source ? '<span class="ticker-source">— ' + escapeHtml(parts.source) + '</span>' : '';
+      var href = it.link ? ' href="' + escapeHtml(it.link) + '" target="_blank" rel="noopener"' : '';
+      return '<a class="ticker-item"' + href + '>' + escapeHtml(parts.headline) + ' ' + src + '</a>';
+    }).join('');
+    // Duplicate so the -50% scroll loops seamlessly.
+    content.innerHTML = html + html;
+
+    // Scale duration with content length so speed feels consistent.
+    var chars = items.reduce(function (n, it) { return n + (it.title || '').length + (it.source || '').length; }, 0);
+    var duration = Math.max(60, Math.min(240, Math.round(chars * 0.18)));
+    content.style.animationDuration = duration + 's';
+  }
+
+  function loadNews() {
+    fetch('/api/news', { cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        if (!data.items || !data.items.length) throw new Error('No items');
+        renderItems(data.items);
+      })
+      .catch(function () {
+        content.innerHTML = '<span class="ticker-loading">News unavailable</span>';
+      });
+  }
+
+  loadNews();
+  setInterval(loadNews, REFRESH_MS);
+})();
+</script>
 
 </body>
 </html>

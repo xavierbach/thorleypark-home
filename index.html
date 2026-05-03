@@ -58,6 +58,79 @@
     text-transform: uppercase;
   }
 
+  /* News ticker */
+  .ticker {
+    display: flex;
+    align-items: stretch;
+    background: #141414;
+    color: #f5f0e8;
+    overflow: hidden;
+    font-size: 0.85rem;
+    line-height: 1;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .ticker[hidden] { display: none; }
+
+  .ticker-label {
+    background: #c8102e;
+    color: white;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    padding: 0 0.85rem;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.35);
+  }
+
+  .ticker-track-wrap {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+  }
+
+  .ticker-track {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    padding: 0.7rem 0;
+    width: max-content;
+    animation: ticker-scroll 90s linear infinite;
+    will-change: transform;
+  }
+  .ticker-track:hover { animation-play-state: paused; }
+
+  .ticker-item {
+    color: inherit;
+    text-decoration: none;
+    padding: 0 0.4rem;
+    flex-shrink: 0;
+  }
+  .ticker-item:hover { color: #ffd76a; }
+  .ticker-sep {
+    color: var(--gold);
+    opacity: 0.55;
+    padding: 0 1rem;
+    flex-shrink: 0;
+  }
+
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track { animation: none; }
+  }
+
   .container {
     max-width: 480px;
     margin: 0 auto;
@@ -138,10 +211,11 @@
   /* Icon backgrounds */
   .icon-tp { background: var(--green); }
   .icon-budget { background: #1e40af; }
-  .icon-chores { background: #15803d; }
-  .icon-kid { background: #f59e0b; }
+  .icon-trip { background: #2d5016; }
+  .icon-wimbledon { background: #5d3d8b; }
   .icon-sorted { background: #0891b2; }
   .icon-money { background: #7c3aed; }
+  .icon-bucko { background: #f97316; }
 
   .footer {
     text-align: center;
@@ -171,6 +245,13 @@
   <div class="subtitle">Home</div>
 </div>
 
+<div class="ticker" id="ticker" hidden aria-label="Breaking news headlines">
+  <div class="ticker-label">Breaking</div>
+  <div class="ticker-track-wrap">
+    <div class="ticker-track" id="ticker-track"></div>
+  </div>
+</div>
+
 <div class="container">
 
   <div class="section-label">Thorley Park</div>
@@ -191,25 +272,25 @@
       </div>
       <div class="link-arrow">›</div>
     </a>
-    <a href="https://chores.thorleypark.com" class="link-card">
-      <div class="link-icon icon-chores">✅</div>
+    <a href="https://thorleypark.com/julytrip/" class="link-card">
+      <div class="link-icon icon-trip">🏔</div>
       <div class="link-info">
-        <div class="link-title">Chores</div>
-        <div class="link-desc">chores.thorleypark.com</div>
+        <div class="link-title">Hannah&rsquo;s Itinerary</div>
+        <div class="link-desc">thorleypark.com/julytrip</div>
       </div>
       <div class="link-arrow">›</div>
     </a>
-    <a href="https://chores.thorleypark.com/kid" class="link-card">
-      <div class="link-icon icon-kid">⭐</div>
+    <a href="https://thorleypark.com/wimbledon2026/" class="link-card">
+      <div class="link-icon icon-wimbledon">🎾</div>
       <div class="link-info">
-        <div class="link-title">Dingo &amp; Fox</div>
-        <div class="link-desc">chores.thorleypark.com/kid</div>
+        <div class="link-title">Wimbledon Trip</div>
+        <div class="link-desc">thorleypark.com/wimbledon2026</div>
       </div>
       <div class="link-arrow">›</div>
     </a>
   </div>
 
-  <div class="section-label">Sorted</div>
+  <div class="section-label">Apps</div>
   <div class="links">
     <a href="https://sortedapp.io" class="link-card">
       <div class="link-icon icon-sorted">📋</div>
@@ -224,6 +305,14 @@
       <div class="link-info">
         <div class="link-title">Sorted Money</div>
         <div class="link-desc">money.sortedapp.io</div>
+      </div>
+      <div class="link-arrow">›</div>
+    </a>
+    <a href="https://getbucko.com" class="link-card">
+      <div class="link-icon icon-bucko">⭐</div>
+      <div class="link-info">
+        <div class="link-title">Bucko</div>
+        <div class="link-desc">getbucko.com</div>
       </div>
       <div class="link-arrow">›</div>
     </a>
@@ -247,6 +336,61 @@
 </div>
 
 <div class="footer">Thorley Park · MacBook Pro</div>
+
+<script>
+  (function () {
+    const REFRESH_MS = 12 * 60 * 1000;
+    const ticker = document.getElementById('ticker');
+    const track = document.getElementById('ticker-track');
+    if (!ticker || !track) return;
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    function buildRun(items) {
+      const parts = [];
+      items.forEach((it, i) => {
+        if (i > 0) parts.push('<span class="ticker-sep" aria-hidden="true">●</span>');
+        parts.push(
+          '<a class="ticker-item" href="' + escapeHtml(it.link) +
+          '" target="_blank" rel="noopener noreferrer">' +
+          escapeHtml(it.title) + '</a>'
+        );
+      });
+      // trailing separator before the duplicated run
+      parts.push('<span class="ticker-sep" aria-hidden="true">●</span>');
+      return parts.join('');
+    }
+
+    async function load() {
+      try {
+        const r = await fetch('/api/news', { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const data = await r.json();
+        const items = (data && data.items) || [];
+        if (!items.length) throw new Error('empty');
+
+        const run = buildRun(items);
+        // duplicate so the -50% keyframe loops seamlessly
+        track.innerHTML = run + run;
+
+        const totalChars = items.reduce((n, it) => n + (it.title || '').length, 0);
+        const seconds = Math.max(45, Math.min(180, Math.round(totalChars / 4)));
+        track.style.animationDuration = seconds + 's';
+
+        ticker.hidden = false;
+      } catch (e) {
+        ticker.hidden = true;
+      }
+    }
+
+    load();
+    setInterval(load, REFRESH_MS);
+  })();
+</script>
 
 </body>
 </html>

@@ -1,0 +1,11 @@
+{
+  "name": "Thorley Park Timelapse",
+  "short_name": "Timelapse",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a3a0a",
+  "theme_color": "#1a3a0a",
+  "icons": [
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

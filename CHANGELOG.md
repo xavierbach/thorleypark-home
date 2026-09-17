@@ -1,5 +1,14 @@
 # Changelog
 
+## [Build 4] — 2026-09-17
+- New `timelapse/` app: local timelapse camera system for the outdoor IP cameras (own Node server on port 3006, no npm deps, ffmpeg via Homebrew)
+- Cameras: RTSP or HTTP snapshot sources with a Test button, passwords stored locally and masked in the UI
+- Jobs: start/end, one or more cameras, capture interval, optional daily window (fixed hours or sunrise to sunset), playback fps or target length
+- Interim "render up to now" while capture continues; automatic final 4K H.264 MP4 at the end; inline playback and download
+- iMessage alerts when a video is ready, when a camera keeps failing, and when disk runs low
+- Per-camera frame browser and zip download of all frames; capture log with gap detection; restart-safe scheduler
+- LaunchAgent, install script, smoke test script; Timelapse link card on the home page
+
 ## [Build 3] — 2026-05-03
 - Thorley Park section: removed Chores and Dingo &amp; Fox; added Hannah&rsquo;s Itinerary (thorleypark.com/julytrip) and Wimbledon Trip (thorleypark.com/wimbledon2026)
 - Renamed &ldquo;Sorted&rdquo; section to &ldquo;Apps&rdquo;; added Bucko link (getbucko.com)

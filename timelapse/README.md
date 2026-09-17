@@ -21,8 +21,11 @@ cd timelapse
 PORT=3006 TIMELAPSE_DATA_DIR=~/TimelapseData node server.js
 ```
 
-Open http://192.168.1.13:3006 (or the LAN IP shown in the log). Add it to the iPhone home screen
-from Safari for a standalone app.
+Reach it at any of these, then add it to the iPhone home screen from Safari for a standalone app:
+
+- http://100.106.18.20:3006 from anywhere, on any device signed into the Tailscale network
+- http://xaviers-macbook-pro.local:3006 on the home Wi-Fi from Apple devices
+- the LAN IP printed in the log (192.168.1.57 at the time of writing; it is assigned by DHCP and can change)
 
 | Variable | Default | Purpose |
 |---|---|---|

@@ -7,12 +7,14 @@ const config = require('./config');
 const log = require('./log');
 
 let info = null; // { ffmpeg, ffprobe, version, ok, error }
+let lastFailAt = 0;
+const RETRY_MS = 30 * 1000; // a failed lookup is re-tried, never cached for good (slow first exec after a reboot)
 
 const CANDIDATES = ['/opt/homebrew/bin/ffmpeg', '/usr/local/bin/ffmpeg', '/usr/bin/ffmpeg', 'ffmpeg'];
 
 function tryVersion(bin) {
   try {
-    const out = execFileSync(bin, ['-version'], { encoding: 'utf8', timeout: 5000, stdio: ['ignore', 'pipe', 'ignore'] });
+    const out = execFileSync(bin, ['-version'], { encoding: 'utf8', timeout: 20000, stdio: ['ignore', 'pipe', 'ignore'] });
     const m = /ffmpeg version (\S+)/.exec(out);
     return m ? m[1] : 'unknown';
   } catch (e) {
@@ -21,7 +23,7 @@ function tryVersion(bin) {
 }
 
 function locate(force = false) {
-  if (info && !force) return info;
+  if (info && !force && (info.ok || Date.now() - lastFailAt < RETRY_MS)) return info;
   const custom = (config.get().ffmpegPath || '').trim();
   const list = custom ? [custom] : CANDIDATES;
   for (const bin of list) {
@@ -41,6 +43,7 @@ function locate(force = false) {
     ffmpeg: null, ffprobe: null, version: null, ok: false,
     error: custom ? `ffmpeg not found at ${custom}` : 'ffmpeg not found. Install with: brew install ffmpeg',
   };
+  lastFailAt = Date.now();
   log.warn(info.error);
   return info;
 }
